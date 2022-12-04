@@ -5,7 +5,8 @@ resource "aws_kms_key" "this" {
 }
 
 module "user" {
-  source = "github.com/ptonini/terraform-aws-iam-user?ref=v1"
+  source = "ptonini/iam-user/aws"
+  version = "~> 1.0.0"
   count = var.access_key ? 1 : 0
   username = var.username == null ? var.name : var.username
   access_key = true
@@ -19,7 +20,4 @@ module "user" {
     ],
     Resource = ["*"]
   }]
-  providers = {
-    aws = aws
-  }
 }
