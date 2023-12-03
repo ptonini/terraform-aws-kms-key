@@ -1,23 +1,29 @@
 resource "aws_kms_key" "this" {
-  description = var.name
-  deletion_window_in_days = var.deletion_window_in_days
-  enable_key_rotation = var.enable_key_rotation
+  description              = var.name
+  key_usage                = var.key_usage
+  customer_master_key_spec = var.customer_master_key_spec
+  deletion_window_in_days  = var.deletion_window_in_days
+  enable_key_rotation      = var.enable_key_rotation
+  policy = var.policy_statement == null ? null : jsonencode({
+    Version   = var.policy_api_version
+    Statement = var.policy_statement
+  })
 }
 
-module "user" {
-  source = "ptonini/iam-user/aws"
-  version = "~> 1.0.0"
-  count = var.access_key ? 1 : 0
-  username = var.username == null ? var.name : var.username
-  access_key = true
-  policy_statements = [{
-    Sid = "VaultKMSUnseal"
-    Effect = "Allow",
+
+module "access_policy" {
+  #checkov:skip=CKV_TF_1: Private module
+  source  = "ptonini/iam-policy/aws"
+  version = "~> 2.0.0"
+  count   = var.access_policy ? 1 : 0
+  name    = "${var.name}-kms-key"
+  statement = [{
+    Effect = "Allow"
     Action = [
       "kms:Encrypt",
       "kms:Decrypt",
       "kms:DescribeKey"
     ],
-    Resource = ["*"]
+    Resource = [aws_kms_key.this.arn]
   }]
 }
