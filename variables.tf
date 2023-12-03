@@ -1,5 +1,9 @@
 variable "name" {}
 
+variable "description" {
+  default = null
+}
+
 variable "key_usage" {
   default = "ENCRYPT_DECRYPT"
 }
@@ -26,4 +30,9 @@ variable "deletion_window_in_days" {
 
 variable "access_policy" {
   default = false
+}
+
+variable "tags" {
+  type    = map(string)
+  default = {}
 }

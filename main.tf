@@ -1,5 +1,5 @@
 resource "aws_kms_key" "this" {
-  description              = var.name
+  description              = coalesce(var.description, var.name)
   key_usage                = var.key_usage
   customer_master_key_spec = var.customer_master_key_spec
   deletion_window_in_days  = var.deletion_window_in_days
@@ -8,6 +8,7 @@ resource "aws_kms_key" "this" {
     Version   = var.policy_api_version
     Statement = var.policy_statement
   })
+  tags = merge({ Name = var.name }, var.tags)
 }
 
 
