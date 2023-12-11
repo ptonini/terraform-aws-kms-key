@@ -8,7 +8,7 @@ resource "aws_kms_key" "this" {
     Version   = var.policy_api_version
     Statement = var.policy_statement
   })
-  tags = merge({ Name = var.name }, var.tags)
+  tags = var.tags
 }
 
 
